@@ -28,11 +28,11 @@ async function run() {
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
-        const collectedData = client.db('obsnest').collection('procuctData')
+        const collectedData = client.db("obsnest").collection("productData");
 
         //_________________________________// Get Operation //_____________________________//
         app.get('/data', async (req, res) => {
-            const result = collectedData.find().toArray;
+            const result = await collectedData.find().toArray();
             res.send(result);
         })
 
