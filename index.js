@@ -5,7 +5,7 @@ require('dotenv').config();
 const port = process.env.PORT || 5000;
 
 // Use Middleware
-app.use(cors());    
+app.use(cors());
 app.use(express.json());
 
 //___________________________________ __// MongoDB //________________________________//
@@ -25,16 +25,27 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
         await client.connect();
+
+        // DataCollections (From MongoDb - NoSQL Dtabase)
+        const dataCollection = client.db('obsnest').collection('procuctData');
+
+        // Get Api
+        app.get('/', (req, res) => {
+            res.send('Get Api Is Working Properly.')
+        });
+
+        app.get('/productData', async (req, res) => {
+            const result = await dataCollection.find().toArray();
+            res.send(result);
+        })
+
+
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
-        const collectedData = client.db("obsnest").collection("productData");
+        // const collectedData = client.db("obsnest").collection("productData");
 
         //_________________________________// Get Operation //_____________________________//
-        app.get('/data', async (req, res) => {
-            const result = await collectedData.find().toArray();
-            res.send(result);
-        })
 
     } finally {
         // await client.close();
@@ -43,10 +54,7 @@ async function run() {
 run().catch(console.dir);
 // // // // // // // // //----------END MongoDb-----------// // // // // // // // // //
 
-// Get Api
-app.get('/', (req, res) => {
-    res.send('Get Api Is Working Properly.')
-});
+
 
 // Listen port
 app.listen(port, () => {
