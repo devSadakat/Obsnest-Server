@@ -8,12 +8,13 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-//___________________________________ __// MongoDB //________________________________//
-// /---/ /---/ /---/ /---/ /---/ /---/ /---/ /---/ /---/ /---/ /---/ /---/ /---/ //
+//_____________________________________// MongoDB //________________________________//
+
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@s-cluster0.pvehgyn.mongodb.net/?retryWrites=true&w=majority&appName=S-Cluster0`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@atlascluster.jhrstoy.mongodb.net/?retryWrites=true&w=majority&appName=AtlasCluster`;
 
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
     serverApi: {
         version: ServerApiVersion.v1,
@@ -24,34 +25,19 @@ const client = new MongoClient(uri, {
 
 async function run() {
     try {
+        // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
-
-        // DataCollections (From MongoDb - NoSQL Dtabase)
-        const dataCollection = client.db('obsnest').collection('procuctData');
-
-        // Get Api
-        app.get('/', (req, res) => {
-            res.send('Get Api Is Working Properly.')
-        });
-
-        app.get('/productData', async (req, res) => {
-            const result = await dataCollection.find().toArray();
-            res.send(result);
-        })
-
-
+        // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
-
-        // const collectedData = client.db("obsnest").collection("productData");
-
-        //_________________________________// Get Operation //_____________________________//
-
     } finally {
-        // await client.close();
+        // Ensures that the client will close when you finish/error
+        await client.close();
     }
 }
 run().catch(console.dir);
+
+
 // // // // // // // // //----------END MongoDb-----------// // // // // // // // // //
 
 
