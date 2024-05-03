@@ -28,11 +28,16 @@ async function run() {
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
 
-        const procuctCollection = client.db('obsnest').collection('productData');
+        const productCollection = client.db('obsnest').collection('productData');
 
         app.get('/', async (req, res) => {
-            const result = await procuctCollection.find().toArray();
+            const result = 'MongoDB Server Is Working Properly.';
             res.send(result);
+        })
+
+        app.get('/data', async (req, res) => {
+            const result = await productCollection.find().toArray();
+            res.send(result)
         })
 
 
