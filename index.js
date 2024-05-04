@@ -50,10 +50,16 @@ app.get('/', async (req, res) => {
     res.send(result);
 })
 
+
 app.get('/data', async (req, res) => {
-    const result = await productCollection.find().toArray();
-    res.send(result)
-})
+    try {
+        const result = await productCollection.find().toArray();
+        res.send(result);
+    } catch (err) {
+        console.error("Error fetching data from MongoDB:", err);
+        res.status(500).send("Error fetching data from MongoDB");
+    }
+});
 
 
 // Listen port
