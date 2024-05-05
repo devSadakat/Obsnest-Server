@@ -12,8 +12,8 @@ app.use(express.json());
 
 // Get Apies
 app.get('/', async(req, res)=>{
-    const result = "Obsnest Banckend Server Is Running Propperly";
-    res.sendStatus(result);
+    const result =await "Obsnest Banckend Server Is Running Propperly";
+    res.send(result);
 });
 
 // Listen Apies
