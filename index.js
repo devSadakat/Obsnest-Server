@@ -41,12 +41,12 @@ async function run() {
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
-    } 
-    catch(error){
+    }
+    catch (error) {
         console.log("An Error Occurred", error);
         res.status(500).send("Internal Server Error")
     }
-    
+
     finally {
         // Ensures that the client will close when you finish/error
         // await client.close();
@@ -64,5 +64,7 @@ app.get('/', async (req, res) => {
 
 // Listen Apies
 app.listen(port, () => {
-    console.log(`Started Server on port${port}`);
+    console.log(`Started Server on port : ${port}`);
+}).on('error', (error) => {
+    console.log("Server StartUp Error", error);
 });
