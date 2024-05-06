@@ -10,7 +10,6 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-
 // Start Mongodb Connection
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
@@ -33,29 +32,35 @@ async function run() {
         // Database from MongoDb
         const obsnestdata = client.db('obsnest').collection('productData')
 
+        // Get Data
+        app.get('/menuData', async (req, res) => {
+            const result = await obsnestdata.find().toArray();
+            res.send(result);
+        });
+
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
-    } finally {
+    } 
+    catch(error){
+        console.log("An Error Occurred", error);
+        res.status(500).send("Internal Server Error")
+    }
+    
+    finally {
         // Ensures that the client will close when you finish/error
-        await client.close();
+        // await client.close();
     }
 }
 run().catch(console.dir);
-y
-// Connected with MongoDB
 
+// Connected with MongoDB
 
 // Get Apies
 app.get('/', async (req, res) => {
-    const result = await "Obsnest Banckend Server Is Running Propperly";
+    const result = "Obsnest Banckend Server Is Running Propperly";
     res.send(result);
 });
-
-app.get('/menuData', async (req, res) => {
-    const result = await obsnestdata.find().toArray();
-    res.send(result);
-})
 
 // Listen Apies
 app.listen(port, () => {
