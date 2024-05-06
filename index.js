@@ -29,6 +29,10 @@ async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
+
+        // Database from MongoDb
+        const obsnestdata = client.db('obsnest').collection('productData')
+
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
@@ -38,7 +42,7 @@ async function run() {
     }
 }
 run().catch(console.dir);
-
+y
 // Connected with MongoDB
 
 
@@ -47,6 +51,11 @@ app.get('/', async (req, res) => {
     const result = await "Obsnest Banckend Server Is Running Propperly";
     res.send(result);
 });
+
+app.get('/menuData', async (req, res) => {
+    const result = await obsnestdata.find().toArray();
+    res.send(result);
+})
 
 // Listen Apies
 app.listen(port, () => {
