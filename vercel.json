@@ -8,12 +8,16 @@
   ],
   "routes": [
     {
-      "src": "/menuData",
-      "dest": "index.js"
-    },
-    {
       "src": "/(.*)",
-      "dest": "index.js"
+      "dest": "index.js",
+      "methods": [
+        "GET",
+        "POST",
+        "PUT",
+        "PATCH",
+        "DELETE",
+        "OPTIONS"
+      ]
     }
   ]
 }
