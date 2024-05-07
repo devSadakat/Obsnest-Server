@@ -34,7 +34,7 @@ async function run() {
 
         // Get Data
         app.get('/menuData', async (req, res) => {
-            const result = await obsnestdata.find().toArray();
+            const result = 'await obsnestdata.find().toArray()';
             res.send(result);
         });
 
