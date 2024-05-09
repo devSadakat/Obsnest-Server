@@ -33,8 +33,8 @@ async function run() {
         const obsnestdata = client.db('obsnest').collection('productData')
 
         // Get Data
-        app.get('/menuData', async (req, res) => {
-            const result = 'await obsnestdata.find().toArray()';
+        app.get('/menudata', async (req, res) => {
+            const result = await obsnestdata.find().toArray();
             res.send(result);
         });
 
