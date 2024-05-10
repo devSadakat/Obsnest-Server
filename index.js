@@ -30,13 +30,21 @@ async function run() {
         await client.connect();
 
         // Database from MongoDb
-        const obsnestdata = client.db('obsnest').collection('productData')
+        const obsnestdata = client.db('obsnest')
+        const dataCollection = obsnestdata.collection('productData')
 
         // Get Data
-        app.get('/menudata', async (req, res) => {
-            const result = await obsnestdata.find().toArray();
-            res.send(result);
-        });
+        // app.get('/menudata', async (req, res) => {
+        //     const result = "await obsnestdata.find().toArray()";
+        //     res.send(result);
+        // });
+
+        // Post Data
+        app.post('/user', async (req, res)=>{
+            const user = req.body;
+            console.log('new User');
+            const result = 
+        })
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
