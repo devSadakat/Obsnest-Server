@@ -1,21 +1,19 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
+const { MongoClient, ServerApiVersion } = require('mongodb');
+
 const app = express();
 
 // Port
 const port = process.env.PORT || 5000;
 
-// Use of middleware
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Start Mongodb Connection
-
-const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@atlascluster.jhrstoy.mongodb.net/?retryWrites=true&w=majority&appName=AtlasCluster`;
-
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+// MongoDB Connection
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@atlascluster.jhrstoy.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, {
     serverApi: {
         version: ServerApiVersion.v1,
@@ -24,48 +22,39 @@ const client = new MongoClient(uri, {
     }
 });
 
-async function run() {
+async function connectToDatabase() {
     try {
-        // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
+        console.log("Connected to MongoDB");
 
-        // Database from MongoDb
-        const obsnestdata = client.db('obsnest').collection('productData')
-
-        // Get Data
-        app.get('/menudata', async (req, res) => {
-            const cursor = obsnestdata.find();
-            const result = await cursor.toArray();
-            res.send(result);
-        });
-
-        // Send a ping to confirm a successful connection
-        await client.db("admin").command({ ping: 1 });
-        console.log("Pinged your deployment. You successfully connected to MongoDB!");
-    }
-    catch (error) {
-        console.log("An Error Occurred", error);
-        res.status(500).send("Internal Server Error")
-    }
-
-    finally {
-        // Ensures that the client will close when you finish/error
-        // await client.close();
+        return client.db("obsnest").collection("productData");
+    } catch (error) {
+        console.log("Error connecting to MongoDB:", error);
+        throw error;
     }
 }
-run().catch(console.dir);
 
-// Connected with MongoDB
-
-// Get Apies
-app.get('/', async (req, res) => {
-    const result = "Obsnest Banckend Server Is Running Propperly";
-    res.send(result);
+// Get menu data
+app.get('/menudata', async (req, res) => {
+    try {
+        const obsnestdata = await connectToDatabase();
+        const cursor = obsnestdata.find();
+        const result = await cursor.toArray();
+        res.send(result);
+    } catch (error) {
+        console.log("Error fetching menu data:", error);
+        res.status(500).send("Internal Server Error");
+    }
 });
 
-// Listen Apies
+// Ping route
+app.get('/', (req, res) => {
+    res.send("Obsnest Backend Server Is Running Properly");
+});
+
+// Start the server
 app.listen(port, () => {
-    console.log(`Started Server on port : ${port}`);
+    console.log(`Server is running on port ${port}`);
 }).on('error', (error) => {
-    console.log("Server StartUp Error", error);
+    console.log("Server startup error:", error);
 });
