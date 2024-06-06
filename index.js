@@ -59,6 +59,21 @@ app.get('/menudata', async (req, res) => {
 });
 
 
+// Post Operation 
+app.post('/carts', async (req, res) => {
+    try {
+        const cartCollection = await connectToDatabase();
+        // const cursor = obsnestdata.find();
+        // const result = await cursor.toArray();
+        // res.send(result);
+        const item = req.body;
+        console.log(item);
+        const result = await cartCollection.insertOne(item);
+    } catch (error) {
+        console.log("Detected Some Error During Yout Post Operation In Cart Database");
+    }
+})
+
 // Start the server
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
