@@ -25,9 +25,15 @@ const client = new MongoClient(uri, {
 async function connectToDatabase() {
     try {
         await client.connect();
+
+
+        // const menuCollection = client.db('obsnest').collection('productData');
+
+
         console.log("Connected to MongoDB");
 
         return client.db("obsnest").collection("productData");
+        return connectToDatabase;
     } catch (error) {
         console.log("Error connecting to MongoDB:", error);
         throw error;
@@ -35,10 +41,15 @@ async function connectToDatabase() {
 }
 
 // Get menu data
+// Ping route
+app.get('/', (req, res) => {
+    res.send("Obsnest Backend Server Is Running Properly");
+});
 app.get('/menudata', async (req, res) => {
     try {
         const obsnestdata = await connectToDatabase();
         const cursor = obsnestdata.find();
+        // const cursor = menuCollection.find()
         const result = await cursor.toArray();
         res.send(result);
     } catch (error) {
@@ -47,10 +58,6 @@ app.get('/menudata', async (req, res) => {
     }
 });
 
-// Ping route
-app.get('/', (req, res) => {
-    res.send("Obsnest Backend Server Is Running Properly");
-});
 
 // Start the server
 app.listen(port, () => {
