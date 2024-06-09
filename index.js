@@ -30,16 +30,15 @@ async function connectToDatabase() {
         // Post Operation 
         app.post('/carts', async (req, res) => {
             try {
-                // const cartCollection = await connectToDatabase();
                 const item = req.body;
                 console.log(item);
                 const result = await cartCollection.insertOne(item);
                 res.send(result);
-                // if (result.insertedId) {
-                //     res.status(201).send({ insertedId: result.insertedId })
-                // } else {
-                //     res.status(500).send("Faild to add item in cart")
-                // }
+                if (result.insertedId) {
+                    res.status(201).send({ insertedId: result.insertedId })
+                } else {
+                    res.status(500).send("Faild to add item in cart")
+                }
             } catch (error) {
                 console.log("Detected Some Error During Yout Post Operation In Cart Database");
             }
