@@ -25,22 +25,34 @@ const client = new MongoClient(uri, {
 async function connectToDatabase() {
     try {
         await client.connect();
-
-
-        // const menuCollection = client.db('obsnest').collection('productData');
-
-
         console.log("Connected to MongoDB");
+        const cartCollection = client.db("obsnest").collection("carts");
+        // Post Operation 
+        app.post('/carts', async (req, res) => {
+            try {
+                // const cartCollection = await connectToDatabase();
+                const item = req.body;
+                console.log(item);
+                const result = await cartCollection.insertOne(item);
+                res.send(result);
+                // if (result.insertedId) {
+                //     res.status(201).send({ insertedId: result.insertedId })
+                // } else {
+                //     res.status(500).send("Faild to add item in cart")
+                // }
+            } catch (error) {
+                console.log("Detected Some Error During Yout Post Operation In Cart Database");
+            }
+        })
 
         return client.db("obsnest").collection("productData");
-        return connectToDatabase;
     } catch (error) {
         console.log("Error connecting to MongoDB:", error);
         throw error;
     }
 }
 
-// Get menu data
+// Get Operation
 // Ping route
 app.get('/', (req, res) => {
     res.send("Obsnest Backend Server Is Running Properly");
@@ -59,20 +71,7 @@ app.get('/menudata', async (req, res) => {
 });
 
 
-// Post Operation 
-app.post('/carts', async (req, res) => {
-    try {
-        const cartCollection = await connectToDatabase();
-        // const cursor = obsnestdata.find();
-        // const result = await cursor.toArray();
-        // res.send(result);
-        const item = req.body;
-        console.log(item);
-        const result = await cartCollection.insertOne(item);
-    } catch (error) {
-        console.log("Detected Some Error During Yout Post Operation In Cart Database");
-    }
-})
+
 
 // Start the server
 app.listen(port, () => {
