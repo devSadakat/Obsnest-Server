@@ -22,59 +22,78 @@ const client = new MongoClient(uri, {
     }
 });
 
+let cartCollection, productDataCollection;
+
+// Connect to the database
 async function connectToDatabase() {
     try {
         await client.connect();
         console.log("Connected to MongoDB");
-        const cartCollection = client.db("obsnest").collection("carts");
-        // Post Operation 
-        app.post('/carts', async (req, res) => {
-            try {
-                const item = req.body;
-                console.log(item);
-                const result = await cartCollection.insertOne(item);
-                res.send(result);
-                if (result.insertedId) {
-                    res.status(201).send({ insertedId: result.insertedId })
-                } else {
-                    res.status(500).send("Faild to add item in cart")
-                }
-            } catch (error) {
-                console.log("Detected Some Error During Yout Post Operation In Cart Database");
-            }
-        })
-
-        return client.db("obsnest").collection("productData");
+        cartCollection = client.db("obsnest").collection("carts");
+        productDataCollection = client.db("obsnest").collection("productData");
     } catch (error) {
         console.log("Error connecting to MongoDB:", error);
         throw error;
     }
 }
 
-// Get Operation
-// Ping route
-app.get('/', (req, res) => {
-    res.send("Obsnest Backend Server Is Running Properly");
-});
-app.get('/menudata', async (req, res) => {
-    try {
-        const obsnestdata = await connectToDatabase();
-        const cursor = obsnestdata.find();
-        // const cursor = menuCollection.find()
-        const result = await cursor.toArray();
-        res.send(result);
-    } catch (error) {
-        console.log("Error fetching menu data:", error);
-        res.status(500).send("Internal Server Error");
-    }
-});
+// Call connectToDatabase and start the server
+connectToDatabase().then(() => {
+    // Get Operation
+    // Ping route
+    app.get('/', (req, res) => {
+        res.send("Obsnest Backend Server Is Running Properly");
+    });
 
+    app.get('/menudata', async (req, res) => {
+        try {
+            const cursor = productDataCollection.find();
+            const result = await cursor.toArray();
+            res.send(result);
+        } catch (error) {
+            console.log("Error fetching menu data:", error);
+            res.status(500).send("Internal Server Error");
+        }
+    });
 
+    // get cart item
+    app.get('/carts', async (req, res) => {
+        const email = req.query.email;
+        if (!email) {
+            return res.send([]);
+        }
+        try {
+            const query = { email: email };
+            const result = await cartCollection.find(query).toArray();
+            res.send(result);
+        } catch (error) {
+            console.log("Error fetching cart data:", error);
+            res.status(500).send("Internal Server Error");
+        }
+    });
 
+    // Post Operation
+    app.post('/carts', async (req, res) => {
+        try {
+            const item = req.body;
+            console.log(item);
+            const result = await cartCollection.insertOne(item);
+            if (result.insertedId) {
+                res.status(201).send({ insertedId: result.insertedId });
+            } else {
+                res.status(500).send("Failed to add item in cart");
+            }
+        } catch (error) {
+            console.log("Error during POST operation in cart database:", error);
+            res.status(500).send("Internal Server Error");
+        }
+    });
 
-// Start the server
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-}).on('error', (error) => {
-    console.log("Server startup error:", error);
+    app.listen(port, () => {
+        console.log(`Server is running on port ${port}`);
+    }).on('error', (error) => {
+        console.log("Server startup error:", error);
+    });
+}).catch(error => {
+    console.log("Failed to connect to the database. Server not started.", error);
 });
