@@ -31,7 +31,7 @@ async function connectToDatabase() {
         console.log("Connected to MongoDB");
         cartCollection = client.db("obsnest").collection("carts");
         productDataCollection = client.db("obsnest").collection("productData");
-        usersCollection = client.db("obsnest").collection("obsnest_users");
+        usersCollection = client.db("obsnest").collection("obsnestusers");
 
     } catch (error) {
         console.log("Error connecting to MongoDB:", error);
@@ -80,14 +80,15 @@ connectToDatabase().then(() => {
     // ----------------Post Operation-------------
 
     // ---------------Post User
-    app.post('obsnest_users', async (req, res) => {
+    app.post('/obsnestusers', async (req, res) => {
         try {
             const user = req.body;
-            const result = await cartCollection.insertOne(user);
-            req.send(result)
+            const result = await usersCollection.insertOneI(user);
+            res.send(result)
+            // res.status(201).json(result)
         } catch (error) {
             console.error("Sorry, Somthing Went Wrong During Post User Data For Obsnest Market", error);
-            res.status(500).send("Sorry Somthing Went Wrong During Post User Data For Obsnest Market.")
+            res.status(500).json({message: "Sorry Somthing Went Wrong During Post User Data For Obsnest Market."})
         }
     })
 
