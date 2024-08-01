@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 const app = express();
 
@@ -31,6 +31,8 @@ async function connectToDatabase() {
         console.log("Connected to MongoDB");
         cartCollection = client.db("obsnest").collection("carts");
         productDataCollection = client.db("obsnest").collection("productData");
+        usersCollection = client.db("obsnest").collection("obsnest_users");
+
     } catch (error) {
         console.log("Error connecting to MongoDB:", error);
         throw error;
@@ -41,10 +43,13 @@ async function connectToDatabase() {
 connectToDatabase().then(() => {
     // Get Operation
     // Ping route
+
+    // ---------------------Get Apies-------------
     app.get('/', (req, res) => {
         res.send("Obsnest Backend Server Is Running Properly");
     });
 
+    // ---------------Menu
     app.get('/menudata', async (req, res) => {
         try {
             const cursor = productDataCollection.find();
@@ -56,7 +61,7 @@ connectToDatabase().then(() => {
         }
     });
 
-    // get cart item
+    //-------------------- get cart item
     app.get('/carts', async (req, res) => {
         const email = req.query.email;
         if (!email) {
@@ -72,7 +77,21 @@ connectToDatabase().then(() => {
         }
     });
 
-    // Post Operation
+    // ----------------Post Operation-------------
+
+    // ---------------Post User
+    app.post('obsnest_users', async (req, res) => {
+        try {
+            const user = req.body;
+            const result = await cartCollection.insertOne(user);
+            req.send(result)
+        } catch (error) {
+            console.error("Sorry, Somthing Went Wrong During Post User Data For Obsnest Market", error);
+            res.status(500).send("Sorry Somthing Went Wrong During Post User Data For Obsnest Market.")
+        }
+    })
+
+    // ----------------Post Cart
     app.post('/carts', async (req, res) => {
         try {
             const item = req.body;
@@ -88,6 +107,21 @@ connectToDatabase().then(() => {
             res.status(500).send("Internal Server Error");
         }
     });
+
+    // -------------------Delete Operations ------------------
+
+    // ToDo: Need to work with delete apies because of difrent code with Programming hero.
+    app.delete('/carts/:id', async (req, res) => {
+        try {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await cartCollection.deleteOne(query);
+            res.send(result);
+        } catch (error) {
+            console.log("There is some error during deleting process");
+            res.status(500).send("Deletning Errro")
+        }
+    })
 
     app.listen(port, () => {
         console.log(`Server is running on port ${port}`);
