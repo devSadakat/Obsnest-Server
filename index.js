@@ -22,7 +22,7 @@ const client = new MongoClient(uri, {
     }
 });
 
-let cartCollection, productDataCollection;
+let cartCollection, productDataCollection, usersCollection;
 
 // Connect to the database
 async function connectToDatabase() {
@@ -83,12 +83,12 @@ connectToDatabase().then(() => {
     app.post('/obsnestusers', async (req, res) => {
         try {
             const user = req.body;
-            const result = await usersCollection.insertOneI(user);
+            const result = await usersCollection.insertOne(user);
             res.send(result)
             // res.status(201).json(result)
         } catch (error) {
-            console.error("Sorry, Somthing Went Wrong During Post User Data For Obsnest Market", error);
-            res.status(500).json({message: "Sorry Somthing Went Wrong During Post User Data For Obsnest Market."})
+            console.log("Sorry, Somthing Went Wrong During Post User Data For Obsnest Market", error);
+            res.status(500).json({ message: "Sorry Somthing Went Wrong During Post User Data For Obsnest Market." })
         }
     })
 
