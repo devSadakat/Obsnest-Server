@@ -77,12 +77,30 @@ connectToDatabase().then(() => {
         }
     });
 
+    // get ObsnestUser data
+    app.get('/obsnestusers', async (req, res) => {
+        try {
+            const result = await usersCollection.find().toArray();
+            res.send(result);
+        } catch (error) {
+            console.log(error);
+            res.status(500).send('Data loading problem from database.')
+        }
+    })
+
     // ----------------Post Operation-------------
 
     // ---------------Post User
     app.post('/obsnestusers', async (req, res) => {
         try {
             const user = req.body;
+            console.log(user);
+            const query = { email: user.email };
+            const existingUser = await usersCollection.findOne(query);
+            console.log('Esisted Uuser', existingUser);
+            if (existingUser) {
+                return (res.send({ message: "This User Is Already Exists" }))
+            }
             const result = await usersCollection.insertOne(user);
             res.send(result)
             // res.status(201).json(result)
