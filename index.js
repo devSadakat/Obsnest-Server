@@ -13,7 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 // MongoDB Connection
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@atlascluster.jhrstoy.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@atlascluster.jhrstoy.mongodb.net/?retryWrites=true&w=majority&appName=AtlasCluster`;
 const client = new MongoClient(uri, {
     serverApi: {
         version: ServerApiVersion.v1,
@@ -21,6 +21,7 @@ const client = new MongoClient(uri, {
         deprecationErrors: true,
     }
 });
+
 
 let cartCollection, productDataCollection, usersCollection;
 

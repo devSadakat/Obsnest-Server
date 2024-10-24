@@ -1,7 +1,6 @@
 {
   "name": "obsnestserver",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
@@ -12,6 +11,16 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "mongodb": "^6.5.0"
-  }
+    "mongodb": "^6.10.0",
+    "nodemon": "^3.1.7"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sadakatsrabon/Obsnest-Server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sadakatsrabon/Obsnest-Server/issues"
+  },
+  "homepage": "https://github.com/sadakatsrabon/Obsnest-Server#readme",
+  "description": ""
 }
